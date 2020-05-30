@@ -1,0 +1,21 @@
+#geopoppy_form_container {
+    min-width: 200px;
+}
+
+#geopoppy_form_container button.geopoppy_action {
+    width: 90%;
+}
+
+#geopoppy_message {
+    margin: 20px;
+    padding: 10px;
+    font-weight: bold;
+    color: white;
+    background-color: none;
+}
+#geopoppy_message.error {
+    background-color: red;
+}
+#geopoppy_message.success {
+    background-color: green;
+}

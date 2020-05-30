@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="http://jelix.org/ns/module/1.0">
+    <info id="geopoppy3liz.com" name="geopoppy" createdate="2020-05-29">
+        <version date="2020-05-29">0.1.0</version>
+        <label lang="en_US">geopoppy</label>
+        <description lang="en_US" />
+        <license URL="">Mozilla Public Licence 2.0</license>
+        <copyright>2011-2020 3liz</copyright>
+        <creator name="Michaël DOUCHIN" email="mdouchin@3liz.com" />
+        <homepageURL>https://3liz.com</homepageURL>
+    </info>
+    <dependencies>
+        <jelix minversion="1.6.26" maxversion="1.6.*"/>
+        <module name="lizmap" minversion="3.3.*"/>
+    </dependencies>
+    <autoload>
+        <class name="geopoppy" file="classes/geopoppy.class.php" />
+    </autoload>
+</module>
