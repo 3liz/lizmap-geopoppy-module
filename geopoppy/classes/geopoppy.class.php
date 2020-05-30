@@ -15,7 +15,7 @@ class geopoppy {
             'sql' => '
                 SELECT * FROM central_lizsync.server_metadata
             ',
-            'message' => 'Central database connection OK'
+            'message' => 'Connection to server OK'
         ),
         'synchronize' => array(
             'sql' => '
@@ -36,20 +36,28 @@ class geopoppy {
     }
 
     protected function getMessage($action, $data) {
-
+        $message = array();
         if (isset($this->actions[$action]) and !empty($this->actions[$action]['message']) ) {
-            $message = $this->actions[$action]['message'];
+            $message['title'] = $this->actions[$action]['message'];
             // synchronization
+            $description = '';
             if ($action == 'synchronize') {
                 foreach($data as $line){
-                    $message.= '</br>Number of modifications applied from the central server ';
-                    $message.= $line->number_replayed_to_central;
-                    $message.= '</br>Number of modifications applied to the central server ';
-                    $message.= $line->number_replayed_to_clone;
-                    $message.= '</br>Number of conflicts resolved during the synchronization ';
-                    $message.= $line->number_conflicts;
+                    $description.= '<b>server to clone</b>: ';
+                    $description.= $line->number_replayed_to_central.'</br>';
+                    $description.= '<b>clone to server</b>: ';
+                    $description.= $line->number_replayed_to_clone.'</br>';
+                    $description.= '<b>conflicts resolved</b>: ';
+                    $description.= $line->number_conflicts.'</br>';
+                }
+            } else {
+                foreach($data as $line){
+                    foreach($line as $k=>$v){
+                        $description.= '<b>'.$k.'</b>: '.$v.'</br>';
+                    }
                 }
             }
+            $message['description'] = $description;
             return $message;
         }
         return Null;
@@ -80,7 +88,10 @@ class geopoppy {
         if(!$sql){
             return array(
                 'status'=>'error',
-                'message'=>'The given action does not exists in this module',
+                'message'=> array(
+                    'title'=>'The given action does not exists in this module',
+                    'description'=>''
+                ),
                 'data'=> array()
             );
         }
@@ -91,7 +102,10 @@ class geopoppy {
         } catch (Exception $e) {
             return array(
                 'status'=>'error',
-                'message'=>'Cannot connect to local geopoppy database',
+                'message'=> array(
+                    'title'=>'Connection error',
+                    'description'=>'Cannot connect to local geopoppy database'
+                ),
                 'data'=> array()
             );
         }
@@ -102,7 +116,10 @@ class geopoppy {
         } catch (Exception $e) {
             return array(
                 'status'=>'error',
-                'message'=>'SQL error :' . $e->getMessage(),
+                'message'=> array(
+                    'title'=>'SQL error',
+                    'description'=> $e->getMessage()
+                ),
                 'data'=> array()
             );
         }
@@ -113,7 +130,10 @@ class geopoppy {
         if($errorInfo and !empty($errorInfo[1])) {
             return array(
                 'status'=>'error',
-                'message'=> $errorInfo[1],
+                'message'=> array(
+                    'title'=>'SQL error',
+                    'description'=> $errorInfo[1]
+                ),
                 'data'=> array()
             );
         }
@@ -124,7 +144,10 @@ class geopoppy {
         if($errorInfo and !empty($errorInfo[1])) {
             return array(
                 'status'=>'error',
-                'message'=> $errorInfo[1],
+                'message'=> array(
+                    'title'=>'SQL error',
+                    'description'=> $errorInfo[1]
+                ),
                 'data'=> array()
             );
         }

@@ -9,6 +9,7 @@
 
 var lizGeopoppy = function() {
     var geopoppyMessageTimeoutId = null;
+    var action_pending = false;
 
     function cleanGeopoppyMessage() {
         var $GeopoppyMessage = $('#lizmap-geopoppy-message');
@@ -28,7 +29,7 @@ var lizGeopoppy = function() {
             $GeopoppyMessage.remove();
         }
         lizMap.addMessage(aMessage, aType, aClose).attr('id','lizmap-geopoppy-message');
-        geopoppyMessageTimeoutId = window.setTimeout(cleanGeopoppyMessage, 5000);
+        geopoppyMessageTimeoutId = window.setTimeout(cleanGeopoppyMessage, 2000);
     }
 
     function addGeopoppyDock(){
@@ -42,28 +43,40 @@ var lizGeopoppy = function() {
         html+= '<button class="btn btn-primary geopoppy_action" value="synchronize">Synchronize</button>';
         html+= '</br>';
         html+= '</center>';
-        html+= '<p id="geopoppy_message"><i>...</i>';
-        html+= '</p>';
+        html+= '<p id="geopoppy_message" style="display: none;">&nbsp;</p>';
+        html+= '<p id="geopoppy_message_description" style="display: none;">&nbsp;</p>';
         html+= '</div>';
 
         // Add Lizmap minidock
         lizMap.addDock(
             'geopoppy',
             'GeoPoppy',
-            'minidock',
+            'dock',
             html,
-            'icon-globe'
+            'icon-refresh'
         );
     }
 
 
     function initGeopoppyView(activate) {
-
+        // Show dock if needed
         if (activate) {
             $('#mapmenu li.geopoppy:not(.active) a').click();
         }
 
+        // Click on action buttons
         $('#geopoppy_form_container button.geopoppy_action').click(function(){
+            if (action_pending) {
+                msg = 'Previous action is still in progress';
+                addGeopoppyMessage(msg, 'info', true);
+                return false;
+            }
+            action_pending = true;
+
+            // Clean interface
+            beforeAction();
+
+            // Build URL
             var action = $(this).val();
             var options = {
                 geopoppy_action: action,
@@ -74,7 +87,8 @@ var lizGeopoppy = function() {
                 url,
                 OpenLayers.Util.getParameterString(lizUrls.params)
             );
-            beforeAction();
+
+            // Query data
             $.getJSON( action_url, options, function(data) {
                 if( data ) {
                     afterAction(action, data);
@@ -82,38 +96,50 @@ var lizGeopoppy = function() {
                 else {
                     console.log('no data');
                 }
+                action_pending = false;
             });
 
         });
     }
 
 
-    function beforeAction(action) {
+    function beforeAction() {
+        // message
         $('#geopoppy_message')
         .removeClass('error').removeClass('success')
-        .html('...');
+        .html('')
+        .hide();
+
+        // description
+        $('#geopoppy_message_description')
+        .html('')
+        .hide();
         return false;
     }
 
     function afterAction(action, data) {
+        // message
         $('#geopoppy_message')
         .removeClass('error').removeClass('success')
         .addClass(data.status)
-        .html(data.message);
+        .html(data.message.title)
+        .show();
+
+        // description
+        $('#geopoppy_message_description')
+        .html(data.message.description)
+        .show();
         return false;
     }
 
     // Add tools on startup
     lizMap.events.on({
         'uicreated': function(e) {
-            // Activate GeoPoppy tool when the map loads
-            var activateGeopoppyOnStartup = true;
-
             // Add Dock
             addGeopoppyDock();
 
             // Activate tools
-            initGeopoppyView(activateGeopoppyOnStartup);
+            initGeopoppyView(true);
         },
         'minidockclosed': function(e) {
         }
