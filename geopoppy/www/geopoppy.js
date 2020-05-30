@@ -42,6 +42,8 @@ var lizGeopoppy = function() {
         html+= '</br>';
         html+= '<button class="btn btn-primary geopoppy_action" value="synchronize">Synchronize</button>';
         html+= '</br>';
+        html+= '<button class="btn btn-primary geopoppy_action" value="get_files_from_ftp">Get files from FTP</button>';
+        html+= '</br>';
         html+= '</center>';
         html+= '<p id="geopoppy_message" style="display: none;">&nbsp;</p>';
         html+= '<p id="geopoppy_message_description" style="display: none;">&nbsp;</p>';
@@ -114,6 +116,11 @@ var lizGeopoppy = function() {
         $('#geopoppy_message_description')
         .html('')
         .hide();
+
+        // Disable buttons
+        $('#geopoppy_form_container button.geopoppy_action')
+        .addClass('disabled');
+
         return false;
     }
 
@@ -129,6 +136,11 @@ var lizGeopoppy = function() {
         $('#geopoppy_message_description')
         .html(data.message.description)
         .show();
+
+        // Enable buttons
+        $('#geopoppy_form_container button.geopoppy_action')
+        .removeClass('disabled');
+
         return false;
     }
 
