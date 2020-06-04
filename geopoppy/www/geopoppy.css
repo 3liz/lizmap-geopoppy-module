@@ -2,11 +2,11 @@
     min-width: 200px;
 }
 
-#geopoppy_form_container button.geopoppy_action {
+#geopoppy_form_container button.geopoppy_action,
+#geopoppy_form_container button.geopoppy_fullscreen {
     width: 95%;
     margin: 5px;
     padding: 5px;
-
 }
 
 #geopoppy_message {

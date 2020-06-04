@@ -42,7 +42,7 @@ var lizGeopoppy = function() {
         html+= '</br>';
         html+= '<button class="btn btn-primary geopoppy_action" value="synchronize">Synchronize</button>';
         html+= '</br>';
-        html+= '<button class="btn btn-primary geopoppy_action" value="get_files_from_ftp">Get files from FTP</button>';
+        html+= '<button class="btn btn-primary geopoppy_fullscreen" value="Fullscreen">Fullscreen</button>';
         html+= '</br>';
         html+= '</center>';
         html+= '<p id="geopoppy_message" style="display: none;">&nbsp;</p>';
@@ -102,6 +102,13 @@ var lizGeopoppy = function() {
             });
 
         });
+
+        // Fullscreen
+        $('#geopoppy_form_container button.geopoppy_fullscreen').click(function(){
+            toggleFullScreen();
+        });
+
+
     }
 
 
@@ -143,6 +150,17 @@ var lizGeopoppy = function() {
 
         return false;
     }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
 
     // Add tools on startup
     lizMap.events.on({
