@@ -8,7 +8,7 @@
 * @license    Mozilla Public Licence
 */
 
-class geopoppy {
+class geopoppy_sql {
 
     protected $actions = array(
         'test_central_connection' => array(
@@ -26,8 +26,6 @@ class geopoppy {
         // Add parameters, FROM geopoppy.calcul_num_adr(ST_geomfromtext($1,$2))
     );
 
-//SELECT * FROM lizsync.synchronize()
-
     protected function getSql($action) {
         if (isset($this->actions[$action]) and !empty($this->actions[$action]['sql']) ) {
             return $this->actions[$action]['sql'];
@@ -36,6 +34,7 @@ class geopoppy {
     }
 
     protected function getMessage($action, $data) {
+
         $message = array();
         if (isset($this->actions[$action]) and !empty($this->actions[$action]['message']) ) {
             $message['title'] = $this->actions[$action]['message'];
@@ -77,7 +76,7 @@ class geopoppy {
         return $profile;
     }
 
-    function getData($repository, $project, $action, $options) {
+    function start($repository, $project, $token, $action) {
 
         $profile = $this->getDatasourceProfile($repository, $project);
         $this->repository = $repository;
@@ -125,7 +124,7 @@ class geopoppy {
         }
 
         // Execute query (prepared statement)
-        $resultset->execute( $options );
+        $resultset->execute();
         $errorInfo = $cnx->errorInfo();
         if($errorInfo and !empty($errorInfo[1])) {
             return array(
@@ -137,6 +136,10 @@ class geopoppy {
                 'data'=> array()
             );
         }
+
+        // Get notices
+        //$last_notice = pg_last_notice($cnx, PGSQL_NOTICE_ALL);
+        //jLog::log(json_encode($last_notice));
 
         // Get returned data
         $data = $resultset->fetchAll();

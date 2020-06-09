@@ -13,21 +13,25 @@
     margin: 5px;
     padding: 10px;
     font-weight: bold;
-    font-size: 1em;
+    font-size: 1.1em;
     color: white;
     background-color: white;
 }
 #geopoppy_message.error {
     background-color: red;
 }
+#geopoppy_message.progress {
+    background: blue;
+}
 #geopoppy_message.success {
     background-color: green;
 }
-
 #geopoppy_message_description {
     margin: 5px;
     padding: 10px;
     font-size: 1em;
     color: black;
     background-color: white;
+    max-height: 300px;
+    overflow: auto;
 }

@@ -14,6 +14,7 @@
         <module name="lizmap" minversion="3.3.*"/>
     </dependencies>
     <autoload>
-        <class name="geopoppy" file="classes/geopoppy.class.php" />
+        <class name="geopoppy_sql" file="classes/geopoppy_sql.class.php" />
+        <class name="geopoppy_ftp" file="classes/geopoppy_ftp.class.php" />
     </autoload>
 </module>

@@ -42,6 +42,8 @@ var lizGeopoppy = function() {
         html+= '</br>';
         html+= '<button class="btn btn-primary geopoppy_action" value="synchronize">Synchronize</button>';
         html+= '</br>';
+        html+= '<button class="btn btn-primary geopoppy_action" value="ftp_synchronize">Synchronize media</button>';
+        html+= '</br>';
         html+= '<button class="btn btn-primary geopoppy_fullscreen" value="Fullscreen">Fullscreen</button>';
         html+= '</br>';
         html+= '</center>';
@@ -58,7 +60,6 @@ var lizGeopoppy = function() {
             'icon-refresh'
         );
     }
-
 
     function initGeopoppyView(activate) {
         // Show dock if needed
@@ -82,7 +83,7 @@ var lizGeopoppy = function() {
             var action = $(this).val();
             var options = {
                 geopoppy_action: action,
-                options: ''
+                geopoppy_token: ''
             };
             var url = geopoppyConfig['urls']['service'];
             var action_url = OpenLayers.Util.urlAppend(
@@ -90,16 +91,44 @@ var lizGeopoppy = function() {
                 OpenLayers.Util.getParameterString(lizUrls.params)
             );
 
-            // Query data
-            $.getJSON( action_url, options, function(data) {
-                if( data ) {
-                    afterAction(action, data);
+            var pollingStatus = true;
+            var pollingTm = null;
+            var pollinTimeout = 2000;
+            var token = null;
+            function pollData() {
+                if (token) {
+                    options['geopoppy_token'] = token;
                 }
-                else {
-                    console.log('no data');
-                }
+                $.ajax({
+                    type: 'get',
+                    url: action_url,
+                    data: options,
+                    success : function(result){
+                        if (result) {
+                            if (result.status == 'progress') {
+                                setActionMessage(result);
+                                token = result.data.token;
+                                pollingTm = setTimeout(function() {
+                                    pollData();
+                                }, pollinTimeout);
+                            } else {
+                                stopPolling();
+                                setActionMessage(result);
+                                reactivateInterface();
+                            }
+                        } else {
+                            stopPolling();
+                            reactivateInterface();
+                        }
+                    }
+                });
+            }
+            function stopPolling() {
                 action_pending = false;
-            });
+                pollingStatus = false;
+                clearTimeout(pollingTm);
+            }
+            pollData();
 
         });
 
@@ -115,7 +144,7 @@ var lizGeopoppy = function() {
     function beforeAction() {
         // message
         $('#geopoppy_message')
-        .removeClass('error').removeClass('success')
+        .removeClass('error').removeClass('success').removeClass('progress')
         .html('')
         .hide();
 
@@ -131,10 +160,11 @@ var lizGeopoppy = function() {
         return false;
     }
 
-    function afterAction(action, data) {
+    function setActionMessage(data) {
+
         // message
         $('#geopoppy_message')
-        .removeClass('error').removeClass('success')
+        .removeClass('error').removeClass('success').removeClass('progress')
         .addClass(data.status)
         .html(data.message.title)
         .show();
@@ -143,6 +173,9 @@ var lizGeopoppy = function() {
         $('#geopoppy_message_description')
         .html(data.message.description)
         .show();
+    }
+
+    function reactivateInterface() {
 
         // Enable buttons
         $('#geopoppy_form_container button.geopoppy_action')
@@ -170,6 +203,14 @@ var lizGeopoppy = function() {
 
             // Activate tools
             initGeopoppyView(true);
+
+            // Prevent back button
+            window.addEventListener('beforeunload', (event) => {
+                // Cancel the event as stated by the standard.
+                event.preventDefault();
+                // Chrome requires returnValue to be set.
+                event.returnValue = '';
+            });
         },
         'minidockclosed': function(e) {
         }
