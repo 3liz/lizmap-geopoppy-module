@@ -24,17 +24,30 @@ class geopoppy_ftp {
     );
 
     private function getFtpConnectionParams($action) {
-        $ftphost = '192.168.1.23';
-        $ftpport = 21;
-        $ftpuser = 'geopoppy';
-        $ftppass = 'geopoppy';
-
         $ftp_params = array();
 
         // Lizmap project and repository paths
         $p = lizmap::getProject($this->repository.'~'.$this->project);
         $r = $p->getRepository();
         $r_path = $r->getPath();
+
+        // Get FTP info
+        $ini_dir = realpath($r_path . '/../../');
+        if (is_dir($ini_dir) and is_file(realpath($ini_dir . '/LizSync.ini'))) {
+            $ini = parse_ini_file(realpath($ini_dir . '/LizSync.ini'), true);
+            if (!$ini) {
+                return Null;
+            }
+        } else {
+            return Null;
+        }
+        if (!array_key_exists('ftp', $ini)) {
+            return Null;
+        }
+        $ftphost = $ini['ftp']['host'];
+        $ftpport = $ini['ftp']['port'];
+        $ftpuser = $ini['ftp']['user'];
+        $ftppass = $ini['ftp']['password'];
 
         $localdir = realpath($r_path . $this->actions[$action]['subdirectory']);
 
@@ -44,7 +57,6 @@ class geopoppy_ftp {
         $ftp_params['password'] = $ftppass;
         $ftp_params['repository_path'] = $r_path;
         $ftp_params['localdir'] = $localdir;
-
         $this->ftp_params = $ftp_params;
 
         return $ftp_params;
@@ -160,7 +172,54 @@ class geopoppy_ftp {
             );
         }
 
+        // Get FTP connection parameters
         $get = $this->getFtpConnectionParams($action);
+        if (!$get) {
+            return array(
+                'status'=>'error',
+                'message'=> array(
+                    'title'=>'FTP parameters not found',
+                    'description'=>''
+                )
+            );
+        }
+
+        // Try to connect to FTP
+        $ok = True;
+        $description = '-';
+        try {
+            $con = ftp_connect($this->ftp_params['host']);
+            if (false === $con) {
+                $msg = 'Unable to connect to FTP server';
+                $ok = False;
+            }
+            $loggedIn = ftp_login(
+                $con,
+                $this->ftp_params['user'],
+                $this->ftp_params['password']
+            );
+            if (true === $loggedIn) {
+                $msg = 'FTP connection OK';
+            } else {
+                $msg = 'Cannot log to FTP server';
+                $ok = False;
+            }
+            ftp_close($con);
+        } catch (Exception $e) {
+            $msg = 'Unknown error while connecting to FTP';
+            $description = $e->getMessage();
+            $ok = False;
+        }
+        if (!$ok) {
+            return array(
+                'status'=>'error',
+                'message'=> array(
+                    'title'=> $msg,
+                    'description'=> $description
+                )
+            );
+        }
+
         $localdir = $this->ftp_params['localdir'];
         if (!$localdir || !is_dir($localdir)) {
             return array(
