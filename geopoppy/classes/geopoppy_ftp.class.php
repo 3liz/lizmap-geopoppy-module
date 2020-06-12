@@ -44,17 +44,22 @@ class geopoppy_ftp {
         if (!array_key_exists('ftp', $ini)) {
             return Null;
         }
-        $ftphost = $ini['ftp']['host'];
-        $ftpport = $ini['ftp']['port'];
-        $ftpuser = $ini['ftp']['user'];
-        $ftppass = $ini['ftp']['password'];
+        $ftp_host = trim($ini['ftp']['host']);
+        $ftp_port = trim($ini['ftp']['port']);
+        $ftp_user = trim($ini['ftp']['user']);
+        $ftp_pass = trim($ini['ftp']['password']);
+        $ftp_root_folder = '';
+        if (array_key_exists('root_folder', $ini['ftp'])) {
+            $ftp_root_folder = trim($ini['ftp']['root_folder']);
+        }
 
         $localdir = realpath($r_path . $this->actions[$action]['subdirectory']);
 
-        $ftp_params['host'] = $ftphost;
-        $ftp_params['port'] = $ftpport;
-        $ftp_params['user'] = $ftpuser;
-        $ftp_params['password'] = $ftppass;
+        $ftp_params['host'] = $ftp_host;
+        $ftp_params['port'] = $ftp_port;
+        $ftp_params['user'] = $ftp_user;
+        $ftp_params['password'] = $ftp_pass;
+        $ftp_params['root_folder'] = $ftp_root_folder;
         $ftp_params['repository_path'] = $r_path;
         $ftp_params['localdir'] = $localdir;
         $this->ftp_params = $ftp_params;
@@ -76,6 +81,10 @@ class geopoppy_ftp {
             )
         );
         $ftpdir.= '/' . $action_params['subdirectory'];
+        $rootf = trim($ftp_params['root_folder'], '/');
+        if (!empty($rootf)) {
+            $ftpdir = '/' . $rootf . $ftpdir;
+        }
         $direction = $action_params['direction'];
         $excludedirs = $action_params['excludedirs'];
 
