@@ -2,8 +2,7 @@
     min-width: 200px;
 }
 
-#geopoppy_form_container button.geopoppy_action,
-#geopoppy_form_container button.geopoppy_fullscreen {
+#geopoppy_form_container button.geopoppy {
     width: 95%;
     margin: 5px;
     padding: 5px;
@@ -77,24 +76,4 @@ Hamburger menu*/
     height: 5px;
     background-color: white;
     margin: 5px 5px;
-}
-
-#switcher td button,
-#switcher td > a,
-#switcher-layers-actions button,
-#filter-content button,
-#sub-dock a.btn,
-span.popupButtonBar button
-{
-    transform: scale(2) !important;
-    margin: 12px !important;
-}
-#switcher-layers-actions td > a {
-    border: 10px solid #c3c3c3;
-}
-#switcher td {
-    white-space: nowrap !important;
-}
-#switcher td span {
-    font-size: 1.5em;
 }

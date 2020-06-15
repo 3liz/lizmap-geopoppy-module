@@ -8,6 +8,7 @@
 */
 
 var lizGeopoppy = function() {
+    var css_scale_active = false;
     var geopoppyMessageTimeoutId = null;
     var action_pending = false;
 
@@ -38,13 +39,20 @@ var lizGeopoppy = function() {
         var html = '';
         html+= '<div id="geopoppy_form_container">';
         html+= '<center>';
-        html+= '<button class="btn btn-primary btn-large geopoppy_action" value="test_central_connection">Test connection</button>';
+        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_action" value="test_central_connection">Test connection</button>';
         html+= '</br>';
-        html+= '<button class="btn btn-primary btn-large geopoppy_action" value="synchronize">Synchronize database</button>';
+        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_action" value="synchronize">Synchronize database</button>';
         html+= '</br>';
-        html+= '<button class="btn btn-primary btn-large geopoppy_action" value="ftp_synchronize">Synchronize media</button>';
+        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_action" value="ftp_synchronize">Synchronize media</button>';
         html+= '</br>';
-        html+= '<button class="btn btn-primary btn-large geopoppy_fullscreen" value="Fullscreen">Fullscreen</button>';
+        html+= '<div class="row">';
+        html+= '<div class="span-6">';
+        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_fullscreen" value="Fullscreen">Fullscreen</button>';
+        html+= '</div>';
+        html+= '<div class="span-6">';
+        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_scalecss" value="scalecss">Zoom interface</button>';
+        html+= '</div>';
+        html+= '</div>';
         html+= '</br>';
         html+= '</center>';
         html+= '<p id="geopoppy_message" style="display: none;">&nbsp;</p>';
@@ -136,6 +144,14 @@ var lizGeopoppy = function() {
         // Fullscreen
         $('#geopoppy_form_container button.geopoppy_fullscreen').click(function(){
             toggleFullScreen();
+            var fullscreen_active = document.fullscreenElement;
+            $(this).toggleClass('active', fullscreen_active);
+        });
+
+        // Big buttons
+        $('#geopoppy_form_container button.geopoppy_scalecss').click(function(){
+            toggleCssScale();
+            $(this).toggleClass('active', css_scale_active);
         });
 
 
@@ -316,6 +332,36 @@ var lizGeopoppy = function() {
         $('#dock-close').css('left', '5px').css('right', 'unset');
     }
 
+    function toggleCssScale() {
+        if (!css_scale_active) {
+            var css = '';
+            css += '#switcher td button,';
+            css += '#switcher td > a,';
+            css += '#switcher-layers-actions button,';
+            css += '#filter-content button,';
+            css += '#sub-dock a.btn,';
+            css += 'span.popupButtonBar button {';
+            css += '    transform: scale(2) !important;';
+            css += '    margin: 12px !important;';
+            css += '}';
+            css += '#switcher-layers-actions td > a {';
+            css += '    border: 10px solid #c3c3c3;';
+            css += '}';
+            css += '#switcher td {';
+            css += '    white-space: nowrap !important;';
+            css += '}';
+            css += '#switcher td span {';
+            css += '    font-size: 1.5em;';
+            css += '}';
+            $('head').append(
+                '<style type="text/css" data-name="geopoppy">' + css + '</style>'
+            );
+        } else {
+            $('head style[data-name="geopoppy"]').remove();
+        }
+        css_scale_active = !css_scale_active;
+    }
+
 
     // Add tools on startup
     lizMap.events.on({
@@ -336,6 +382,7 @@ var lizGeopoppy = function() {
                 // Chrome requires returnValue to be set.
                 event.returnValue = '';
             });
+
         },
         'minidockclosed': function(e) {
         }
