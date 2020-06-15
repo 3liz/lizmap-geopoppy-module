@@ -47,7 +47,8 @@ Hamburger menu*/
     background: none;
     min-width: 200px;
 }
-#mobile_menu_container button {
+#mobile_menu_container button,
+#mobile_menu_container a.btn {
     width: 95%;
     margin: 5px;
     padding: 5px;

@@ -39,18 +39,18 @@ var lizGeopoppy = function() {
         var html = '';
         html+= '<div id="geopoppy_form_container">';
         html+= '<center>';
-        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_action" value="test_central_connection">Test connection</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="test_central_connection">Test connection</button>';
         html+= '</br>';
-        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_action" value="synchronize">Synchronize database</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="synchronize">Synchronize database</button>';
         html+= '</br>';
-        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_action" value="ftp_synchronize">Synchronize media</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="ftp_synchronize">Synchronize media</button>';
         html+= '</br>';
         html+= '<div class="row">';
         html+= '<div class="span-6">';
-        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_fullscreen" value="Fullscreen">Fullscreen</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_fullscreen" value="Fullscreen">Fullscreen</button>';
         html+= '</div>';
         html+= '<div class="span-6">';
-        html+= '<button class="btn btn-success btn-large geopoppy geopoppy_scalecss" value="scalecss">Zoom interface</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_scalecss" value="scalecss">Zoom interface</button>';
         html+= '</div>';
         html+= '</div>';
         html+= '</br>';
@@ -219,7 +219,13 @@ var lizGeopoppy = function() {
         var html = '';
         html+= '<div id="mobile_menu_container">';
         html+= '<center>';
-        var buttons = {};
+        var buttons = {'dock': []};
+        var ha = $('#mapmenu li.home > a');
+        var home_href = ha.attr('href');
+        var home_title = ha.attr('data-original-title');
+        var home_button = '<button class="btn btn-large btn-inverse dock" value="home" data-href="' + home_href + '">' + home_title + '</button>';
+        home_button+= '</br>';
+        buttons['dock'].push(home_button);
         $('#mapmenu ul li a').each(function(){
             var a = $(this);
             var aid = a.attr('id');
@@ -266,6 +272,12 @@ var lizGeopoppy = function() {
         // It opens the corresponding mapmenu item
         $('#mobile_menu_container button').click(function(){
             var aid = $(this).val();
+
+            if (aid == 'home') {
+                var url = $(this).attr('data-href');
+                window.open(url, '_top');
+                return false;
+            }
 
             // If the dock is not the left dock, hide the left dock
             if (!($(this).hasClass('dock'))) {
