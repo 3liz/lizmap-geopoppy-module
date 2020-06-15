@@ -7,6 +7,9 @@
     width: 95%;
     margin: 5px;
     padding: 5px;
+    font-weight: bold;
+    font-size: 1.8em;
+    padding:10px;
 }
 
 #geopoppy_message {
@@ -34,4 +37,64 @@
     background-color: white;
     max-height: 300px;
     overflow: auto;
+}
+
+/*
+Hamburger menu*/
+#mobile menu-content {
+    background-color: transparent;
+}
+#mobile_menu_container {
+    background: none;
+    min-width: 200px;
+}
+#mobile_menu_container button {
+    width: 95%;
+    margin: 5px;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 1.8em;
+    padding:10px;
+}
+
+#mobile_hamburger {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1020;
+    background: rgba(0, 0, 0, 0.8);
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    border: 1px solid rgba(0, 0, 0, 0.8);
+}
+#mobile_hamburger center {
+    margin-top: 12px;
+}
+#mobile_hamburger div {
+    width: 35px;
+    height: 5px;
+    background-color: white;
+    margin: 5px 5px;
+}
+
+#switcher td button,
+#switcher td > a,
+#switcher-layers-actions button,
+#filter-content button,
+#sub-dock a.btn,
+span.popupButtonBar button
+{
+    transform: scale(2) !important;
+    margin: 12px !important;
+}
+#switcher-layers-actions td > a {
+    border: 10px solid #c3c3c3;
+}
+#switcher td {
+    white-space: nowrap !important;
+}
+#switcher td span {
+    font-size: 1.5em;
 }
