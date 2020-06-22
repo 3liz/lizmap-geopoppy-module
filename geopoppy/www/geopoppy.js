@@ -12,6 +12,19 @@ var lizGeopoppy = function() {
     var geopoppyMessageTimeoutId = null;
     var action_pending = false;
 
+    // Hamburger menu black list
+    var menu_black_list = [
+        'permaLink',
+        'metadata',
+        'popupcontent', // will not prevent to use popup, just no see the item in the menu
+    ];
+
+    // Auto-center button (replaces Lizmap original #geolocation-bind
+    var autoCenterTimeout = 10000;
+    var autoCenterStatus = false;
+    var autoCenterTm = null;
+    var removeStopButton = false;
+
     function cleanGeopoppyMessage() {
         var $GeopoppyMessage = $('#lizmap-geopoppy-message');
         if ( $GeopoppyMessage.length != 0 ) {
@@ -62,7 +75,7 @@ var lizGeopoppy = function() {
         // Add Lizmap minidock
         lizMap.addDock(
             'geopoppy',
-            'GeoPoppy',
+            'Synchro',
             'dock',
             html,
             'icon-refresh'
@@ -213,12 +226,12 @@ var lizGeopoppy = function() {
       }
     }
 
-    function addHamburgerMenu() {
+    function addHamburgerMenu(menu_black_list) {
 
-        // Add dock with all mapmenu item as buttons
-        var html = '';
-        html+= '<div id="mobile_menu_container">';
-        html+= '<center>';
+        // Build panel content from original map-menu
+        var slide_content = '';
+        slide_content+= '<div id="mobile_menu_container">';
+        slide_content+= '<center>';
         var buttons = {'dock': []};
         var ha = $('#mapmenu li.home > a');
         var home_href = ha.attr('href');
@@ -231,19 +244,22 @@ var lizGeopoppy = function() {
             var aid = a.attr('id');
             var btn_class = 'btn-inverse';
             if (aid) {
-                var atitle = a.attr('data-original-title');
-                var li = a.parent('li:first');
-                var menu_type = li.attr('class')
-                .replace('nav-', '')
-                .replace('active', '')
-                .replace(aid.replace('button-', ''), '')
-                .trim()
-                ;
-                if (menu_type != 'dock' && li.hasClass('active')) {
-                    btn_class = 'btn-warning';
+                var item = aid.replace('button-', '');
+                if (!menu_black_list.includes(item)) {
+                    var atitle = a.attr('data-original-title');
+                    var li = a.parent('li:first');
+                    var menu_type = li.attr('class')
+                    .replace('nav-', '')
+                    .replace('active', '')
+                    .replace(item, '')
+                    .trim()
+                    ;
+                    if (menu_type != 'dock' && li.hasClass('active')) {
+                        btn_class = 'btn-warning';
+                    }
+                    var button = '<button class="btn btn-large ' + ' ' + btn_class + ' ' + menu_type + '" value="' + aid + '">' + atitle + '</button>';
+                    button+= '</br>';
                 }
-                var button = '<button class="btn btn-large ' + ' ' + btn_class + ' ' + menu_type + '" value="' + aid + '">' + atitle + '</button>';
-                button+= '</br>';
             }
             if (!(menu_type in buttons))
                     buttons[menu_type] = [];
@@ -255,18 +271,81 @@ var lizGeopoppy = function() {
         for(var d in docks){
             var dock = docks[d];
             if (dock in buttons) {
-                html+= '<h3>'+dock+'</h3>';
-                html+= '<div>';
-                html+= buttons[dock].join(' ');
-                html+= '</div>';
+                slide_content+= '<h3>'+dock+'</h3>';
+                slide_content+= '<div>';
+                slide_content+= buttons[dock].join(' ');
+                slide_content+= '</div>';
             }
         }
 
-        html+= '</center>';
-        html+= '</div>';
+        slide_content+= '</center>';
+        slide_content+= '</div>';
+
+        // Add hamburger button at the top left
+        var hamburger_html = '';
+        hamburger_html += '<div id="mobile_hamburger">';
+        hamburger_html+= '<center>';
+        hamburger_html+= '<div class="hamburger_line"></div>';
+        hamburger_html+= '<div class="hamburger_line"></div>';
+        hamburger_html+= '<div class="hamburger_line"></div>';
+        hamburger_html+= '</center>';
+        hamburger_html += '</div>';
+        $('#map-content').append(hamburger_html);
+        $('#mobile_hamburger').click(function(){
+            $('#mapmenu li.mobile a').click();
+            $(this).hide();
+        });
+
+        // Add edition button at the bottom
+        var edition_layers_count = $('#edition-layer').length;
+        if (edition_layers_count) {
+            var edition_html = '';
+            edition_html += '<div id="mobile_edition">';
+            edition_html+= '<center>';
+            edition_html+= '<i class="icon-pencil icon-white"></i>';
+            edition_html+= '</center>';
+            edition_html += '</div>';
+            $('#map-content').append(edition_html);
+
+            $('#edition-draw').click(function(){
+
+                // Adapt geolocation minidock interface
+                setTimeout(() => {
+                    changeGeolocationInterface();
+                }, 1000);
+            });
+            $('#mobile_edition').click(function(){
+                // Open creation form automatically if only 1 layer
+                if (!lizMap.editionPending && edition_layers_count == 1){
+                    $('#edition-draw').click();
+                }
+                // Toggle edition dock
+                $('#mapmenu li.edition a').click();
+            });
+
+        }
+
+        function changeGeolocationInterface() {
+            // Open geolocation if not yet active
+            $('#mapmenu li.geolocation:not(.active) a').click();
+
+            // Update mini dock size
+            lizMap.updateMiniDockSize();
+
+            // EDITION
+            // Expand geometry menu
+            if( $("#edition-point-coord-form-group:visible").length == 0 ) {
+                $("#edition-point-coord-form-expander").click();
+            }
+            // Link edition node X and Y to geolocation
+            if (lizMap.editionPending
+                && !($('#geolocation-edition-linked').prop( "checked")) ) {
+                $('#edition-point-coord-geolocation').prop('checked', true).change();
+            }
+        }
 
         // Add dock
-        lizMap.addDock('mobile', 'Menu', 'dock', html, 'icon-list');
+        lizMap.addDock('mobile', 'Menu', 'dock', slide_content, 'icon-list');
 
         // Trigger action when button is clicked
         // It opens the corresponding mapmenu item
@@ -300,33 +379,40 @@ var lizGeopoppy = function() {
             $('#'+aid).click();
         });
 
-        // Add humburger button
-        var html = '';
-        html += '<div id="mobile_hamburger">';
-        html+= '<center>';
-        html+= '<div class="hamburger_line"></div>';
-        html+= '<div class="hamburger_line"></div>';
-        html+= '<div class="hamburger_line"></div>';
-        html+= '</center>';
-        html += '</div>';
-        $('#map-content').append(html);
-        $('#mobile_hamburger').click(function(){
-            $('#mapmenu li.mobile a').click();
-            $(this).hide();
-        });
-
         // Hide mapmenu
         $('#mapmenu').css('width', '0px').hide();
         $('#dock').css('left', '0px').css('border-left', 'none');
         $('#map-content').css('margin-left', '0px');
+        lizMap.updateContentSize();
 
         // Hide active dock
         $('#mapmenu li.nav-dock.active a').click();
 
         // Show hamburger button when dock is closed
+        // (de)Activate popup to let the user close the dock when clicking in the map
         lizMap.events.on({
-            'dockclosed': function(){
+            'dockopened': function() {
+                if ('featureInfo' in lizMap.controls) {
+                    lizMap.controls.featureInfo.deactivate();
+                }
+            },
+            'bottomdockopened': function() {
+                if ('featureInfo' in lizMap.controls) {
+                    lizMap.controls.featureInfo.deactivate();
+                }
+            },
+            'minidockopened': function() {
+                lizMap.updateMiniDockSize();
+            },
+            'dockclosed': function(e){
                 $('#mobile_hamburger').show();
+
+                if ('featureInfo' in lizMap.controls) {
+                    lizMap.controls.featureInfo.activate();
+                }
+                if (e.id == 'edition' && lizMap.editionPending) {
+                    changeGeolocationInterface();
+                }
             },
             'minidockclosed': function(){
                 $('#mobile_menu_container button.minidock')
@@ -337,11 +423,26 @@ var lizGeopoppy = function() {
                 $('#mobile_menu_container button.bottomdock')
                 .removeClass('btn-warning')
                 .addClass('btn-inverse');
+
+                if ('featureInfo' in lizMap.controls) {
+                    lizMap.controls.featureInfo.activate();
+                }
             }
         });
 
         // Move dock-close button at the left
         $('#dock-close').css('left', '5px').css('right', 'unset');
+
+        // Hide dock if map is clicked
+        $('#content.mobile #map').click(function(event){
+            var active_dock_a = $('#mapmenu ul li.nav-dock.active a, #mapmenu ul li.nav-bottomdock.active a, #mapmenu ul li.nav-rightdock.active a');
+            if (active_dock_a.length) {
+                active_dock_a.click();
+                return false;
+            }
+        });
+
+
     }
 
     function toggleCssScale() {
@@ -368,10 +469,90 @@ var lizGeopoppy = function() {
             $('head').append(
                 '<style type="text/css" data-name="geopoppy">' + css + '</style>'
             );
+            // Make geolocation button larger
+            $('div#geolocation button.btn')
+            .removeClass('btn-small')
+            .addClass('btn-large');
         } else {
             $('head style[data-name="geopoppy"]').remove();
+            // Make geolocation button smaller
+            $('div#geolocation button.btn')
+            .removeClass('btn-large')
+            .addClass('btn-small');
         }
         css_scale_active = !css_scale_active;
+    }
+
+
+    function reactivateLocateAutocomplete() {
+        $('div.locate-layer select').hide();
+        $('span.custom-combobox').show();
+        $('span.custom-combobox input').autocomplete(
+            "option",
+            "position",
+            { my : "right top", at: "right bottom" }
+        );
+    }
+
+
+    function toggleAutoCenter(toggle) {
+        var geolocate = lizMap.controls.geolocation;
+        if (toggle) {
+            setAutoCenter()
+        } else {
+            clearAutoCenter();
+        }
+    }
+
+    function setAutoCenter() {
+        autoCenterTm = setTimeout(
+            function() {
+                autoCenterStatus = true;
+                // Zoom
+                $('#geolocation-center').click();
+                console.log('center = ' + (new Date()).getSeconds());
+                // Re-run
+                setAutoCenter();
+            },
+            autoCenterTimeout
+        );
+    }
+    function clearAutoCenter() {
+        console.log('deactivate');
+        autoCenterStatus = false;
+        clearTimeout(autoCenterTm);
+    }
+
+    function replaceGeolocationAutoCenterButton() {
+        // Run only if needed
+        if (!('geolocation' in lizMap.controls)) {
+            return false;
+        }
+        // Hide Lizmap original auto center button
+        $('#geolocation-bind').hide();
+
+        // Replace with new button
+        var but = '&nbsp;<button id="geolocation-auto-center" class="btn btn-large btn-primary start"><span class="icon"></span>&nbsp;Rester centré</button>';
+
+        $('#geolocation-center').after(but);
+        $('#geolocation-auto-center').click(function(){
+            if ($(this).hasClass('start')) {
+                $(this).removeClass('start');
+                var set_active = true;
+            } else {
+                var set_active = !autoCenterStatus;
+            }
+            $(this)
+                .toggleClass('btn-success', set_active)
+                .toggleClass('btn-primary', !set_active);
+            toggleAutoCenter(set_active);
+        });
+
+        // Remove stop button
+        if (removeStopButton) {
+            $('#geolocation-stop').hide();
+        }
+
     }
 
 
@@ -385,9 +566,10 @@ var lizGeopoppy = function() {
             initGeopoppyView(false);
 
             // Add hamburger menu and button
-            addHamburgerMenu();
+            // List the lizmap menu item to NOT show in the hamburger menu
+            addHamburgerMenu(menu_black_list);
 
-            // Prevent back button
+            // Prevent leaving the page without warning (back button in Android)
             window.addEventListener('beforeunload', (event) => {
                 // Cancel the event as stated by the standard.
                 event.preventDefault();
@@ -395,10 +577,37 @@ var lizGeopoppy = function() {
                 event.returnValue = '';
             });
 
+            // Reactivate autocompletion for content.mobile
+            // And position the panel from bottom to top
+            // We change select height because lizMap updatemobile function
+            // is triggered lately (and on window resize)
+            // and would override code placed here
+            setTimeout(() => { reactivateLocateAutocomplete(); }, 2000);
+            $('div#locate').click(function(){
+                reactivateLocateAutocomplete();
+            });
+
+            // Auto activate fullscreen and bigger interfae
+            $('#geopoppy_form_container button.geopoppy_scalecss').click();
+
+            // Replace autocenter
+            replaceGeolocationAutoCenterButton();
+
+            if ('geolocation' in lizMap.controls) {
+                lizMap.controls.geolocation.activate();
+                $('#geolocation-auto-center').click();
+
+                // Re-display locate by layer
+                if (('locateByLayer' in lizMap.config) && !(jQuery.isEmptyObject(lizMap.config.locateByLayer))) {
+                    $('#mapmenu li.locate:not(.active) a').click();
+                }
+            }
+
         },
         'minidockclosed': function(e) {
         }
     });
+
     return {};
 }();
 

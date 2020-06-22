@@ -39,6 +39,13 @@
 }
 
 /*
+Change mobile interface
+*/
+#content.mobile #dock, #content.mobile #bottom-dock {
+    right: 20%;
+}
+
+/*
 Hamburger menu*/
 #mobile menu-content {
     background-color: transparent;
@@ -57,24 +64,36 @@ Hamburger menu*/
     padding:10px;
 }
 
-#mobile_hamburger {
+#mobile_hamburger, #mobile_edition {
     cursor: pointer;
     position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1020;
+    z-index: 1050;
     background: rgba(0, 0, 0, 0.8);
     width: 50px;
     height: 50px;
     border-radius: 50px;
-    border: 1px solid rgba(0, 0, 0, 0.8);
+    border: 3px solid rgba(255, 255, 255, 0.7);
+}
+#mobile_hamburger {
+    top: 10px;
+    left: 10px;
 }
 #mobile_hamburger center {
     margin-top: 12px;
 }
 #mobile_hamburger div {
     width: 35px;
-    height: 5px;
+    height: 3px;
     background-color: white;
-    margin: 5px 5px;
+    margin: 8px 5px;
+}
+
+#mobile_edition {
+    bottom: 100px;
+    right: 50px;
+}
+
+#mobile_edition i{
+    margin-top: 20px;
+    transform: scale(1.5);
 }
