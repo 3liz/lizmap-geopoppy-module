@@ -15,16 +15,21 @@ class geopoppy_sql {
             'sql' => '
                 SELECT * FROM central_lizsync.server_metadata
             ',
-            'message' => 'Connection to server OK'
+            'message' => ''
         ),
         'synchronize' => array(
             'sql' => '
                 SELECT * FROM lizsync.synchronize()
             ',
-            'message' => 'Synchronization OK'
+            'message' => ''
         )
         // Add parameters, FROM geopoppy.calcul_num_adr(ST_geomfromtext($1,$2))
     );
+
+    function __construct() {
+        $this->actions['test_central_connection']['message'] = jLocale::get('geopoppy~geopoppy.action.connection.ok');
+        $this->actions['synchronize']['message'] = jLocale::get('geopoppy~geopoppy.action.synchronization.ok');
+    }
 
     protected function getSql($action) {
         if (isset($this->actions[$action]) and !empty($this->actions[$action]['sql']) ) {
@@ -42,11 +47,11 @@ class geopoppy_sql {
             $description = '';
             if ($action == 'synchronize') {
                 foreach($data as $line){
-                    $description.= '<b>server to clone</b>: ';
+                    $description.= '<b>'.jLocale::get('geopoppy~geopoppy.result.server.to.clone').'</b>: ';
                     $description.= $line->number_replayed_to_central.'</br>';
-                    $description.= '<b>clone to server</b>: ';
+                    $description.= '<b>'.jLocale::get('geopoppy~geopoppy.result.clone.to.server').'</b>: ';
                     $description.= $line->number_replayed_to_clone.'</br>';
-                    $description.= '<b>conflicts resolved</b>: ';
+                    $description.= '<b>'.jLocale::get('geopoppy~geopoppy.result.conflicts.resolved').'</b>: ';
                     $description.= $line->number_conflicts.'</br>';
                 }
             } else {
@@ -88,7 +93,7 @@ class geopoppy_sql {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'The given action does not exists in this module',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.action.unknown.title'),
                     'description'=>''
                 ),
                 'data'=> array()
@@ -102,8 +107,8 @@ class geopoppy_sql {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'Connection error',
-                    'description'=>'Cannot connect to local geopoppy database'
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.connection.error.title'),
+                    'description'=>jLocale::get('geopoppy~geopoppy.error.connection.error.description')
                 ),
                 'data'=> array()
             );
@@ -116,7 +121,7 @@ class geopoppy_sql {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'SQL error',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.connection.sql.title'),
                     'description'=> $e->getMessage()
                 ),
                 'data'=> array()
@@ -130,7 +135,7 @@ class geopoppy_sql {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'SQL error',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.connection.sql.title'),
                     'description'=> $errorInfo[1]
                 ),
                 'data'=> array()
@@ -148,7 +153,7 @@ class geopoppy_sql {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'SQL error',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.connection.sql.title'),
                     'description'=> $errorInfo[1]
                 ),
                 'data'=> array()

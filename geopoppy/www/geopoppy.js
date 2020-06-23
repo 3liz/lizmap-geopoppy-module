@@ -52,18 +52,18 @@ var lizGeopoppy = function() {
         var html = '';
         html+= '<div id="geopoppy_form_container">';
         html+= '<center>';
-        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="test_central_connection">Test connection</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="test_central_connection">'+geopoppyLocales['ui.button.test.connection.title']+'</button>';
         html+= '</br>';
-        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="synchronize">Synchronize database</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="synchronize">'+geopoppyLocales['ui.button.synchronize.database.title']+'</button>';
         html+= '</br>';
-        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="ftp_synchronize">Synchronize media</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="ftp_synchronize">'+geopoppyLocales['ui.button.synchronize.media.title']+'</button>';
         html+= '</br>';
         html+= '<div class="row">';
         html+= '<div class="span-6">';
-        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_fullscreen" value="Fullscreen">Fullscreen</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_fullscreen" value="Fullscreen">'+geopoppyLocales['ui.button.toggle.fullscreen.title']+'</button>';
         html+= '</div>';
         html+= '<div class="span-6">';
-        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_scalecss" value="scalecss">Zoom interface</button>';
+        html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_scalecss" value="scalecss">'+geopoppyLocales['ui.button.zoom.interface.title']+'</button>';
         html+= '</div>';
         html+= '</div>';
         html+= '</br>';
@@ -75,7 +75,7 @@ var lizGeopoppy = function() {
         // Add Lizmap minidock
         lizMap.addDock(
             'geopoppy',
-            'Synchro',
+            geopoppyLocales['ui.dock.geopoppy.title'],
             'dock',
             html,
             'icon-refresh'
@@ -91,7 +91,7 @@ var lizGeopoppy = function() {
         // Click on action buttons
         $('#geopoppy_form_container button.geopoppy_action').click(function(){
             if (action_pending) {
-                msg = 'Previous action is still in progress';
+                msg = geopoppyLocales['ui.msg.previous.action'];
                 addGeopoppyMessage(msg, 'info', true);
                 return false;
             }
@@ -182,7 +182,7 @@ var lizGeopoppy = function() {
 
         // description
         $('#geopoppy_message_description')
-        .html('Action started...')
+        .html(geopoppyLocales['ui.msg.action.started'])
         .show();
 
         // Disable buttons
@@ -532,7 +532,7 @@ var lizGeopoppy = function() {
         $('#geolocation-bind').hide();
 
         // Replace with new button
-        var but = '&nbsp;<button id="geolocation-auto-center" class="btn btn-large btn-primary start"><span class="icon"></span>&nbsp;Rester centré</button>';
+        var but = '&nbsp;<button id="geolocation-auto-center" class="btn btn-large btn-primary start"><span class="icon"></span>&nbsp;'+geopoppyLocales['ui.button.geolocation.auto.center.title']+'</button>';
 
         $('#geolocation-center').after(but);
         $('#geolocation-auto-center').click(function(){

@@ -19,7 +19,7 @@ class serviceCtrl extends jController {
             $data = array(
                 'status'=>'error',
                 'message'=>array(
-                    'title'=>'Project not found',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.project.not.found.title'),
                     'description' => ''
                 )
             );
@@ -29,7 +29,7 @@ class serviceCtrl extends jController {
             $data = array(
                 'status'=>'error',
                 'message'=>array(
-                    'title'=>'Repository not found',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.project.not.found.title'),
                     'description' => ''
                 )
             );
@@ -42,7 +42,7 @@ class serviceCtrl extends jController {
             $data = array(
                 'status'=>'error',
                 'message'=>array(
-                    'title'=>'A problem occured while loading project with Lizmap',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.project.problem.title'),
                     'description' => ''
                 )
             );
@@ -122,6 +122,5 @@ class serviceCtrl extends jController {
 
 
     }
-
 
 }

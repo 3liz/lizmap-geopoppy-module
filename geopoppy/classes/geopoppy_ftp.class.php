@@ -175,7 +175,7 @@ class geopoppy_ftp {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'Given action does not exists',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.action.unknown.title'),
                     'description'=>''
                 )
             );
@@ -187,7 +187,7 @@ class geopoppy_ftp {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'FTP parameters not found',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.ftp.parameters.title'),
                     'description'=>''
                 )
             );
@@ -199,7 +199,7 @@ class geopoppy_ftp {
         try {
             $con = ftp_connect($this->ftp_params['host']);
             if (false === $con) {
-                $msg = 'Unable to connect to FTP server';
+                $msg = jLocale::get('geopoppy~geopoppy.error.ftp.connection.title');
                 $ok = False;
             }
             $loggedIn = ftp_login(
@@ -208,14 +208,14 @@ class geopoppy_ftp {
                 $this->ftp_params['password']
             );
             if (true === $loggedIn) {
-                $msg = 'FTP connection OK';
+                $msg = jLocale::get('geopoppy~geopoppy.result.ftp.connection.title');
             } else {
-                $msg = 'Cannot log to FTP server';
+                $msg = jLocale::get('geopoppy~geopoppy.error.ftp.login.title');
                 $ok = False;
             }
             ftp_close($con);
         } catch (Exception $e) {
-            $msg = 'Unknown error while connecting to FTP';
+            $msg = jLocale::get('geopoppy~geopoppy.error.ftp.unknown.title');
             $description = $e->getMessage();
             $ok = False;
         }
@@ -234,7 +234,7 @@ class geopoppy_ftp {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'No directory to synchronize',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.ftp.no.directory.title'),
                     'description'=>''
                 )
             );
@@ -243,7 +243,7 @@ class geopoppy_ftp {
         return array(
             'status'=>'success',
             'message'=> array(
-                'title'=>'FTP Ok',
+                'title'=>jLocale::get('geopoppy~geopoppy.result.ftp.ok.title'),
                 'description'=>''
             )
         );
@@ -271,7 +271,7 @@ class geopoppy_ftp {
             return array(
                 'status'=>'error',
                 'message'=> array(
-                    'title'=>'Unknown error while running the media synchronization',
+                    'title'=>jLocale::get('geopoppy~geopoppy.error.ftp.synchronization.unknown.title'),
                     'description'=>''
                 ),
                 'data'=> array()
@@ -281,7 +281,7 @@ class geopoppy_ftp {
         $rdata = array(
             'status'=>'progress',
             'message'=> array(
-                'title' => 'Media synchronization started',
+                'title' => jLocale::get('geopoppy~geopoppy.result.ftp.synchronization.started.title'),
                 'description' => 'Token = ' . $token
             ),
             'data'=> array('token'=>$token)
@@ -300,7 +300,7 @@ class geopoppy_ftp {
             $data = array(
                 'status'=>'error',
                 'message'=> array (
-                    'title' => 'A problem occured while loading project with Lizmap',
+                    'title' => jLocale::get('geopoppy~geopoppy.error.ftp.synchronization.bad.project.title'),
                     'description' => ''
                 )
             );
@@ -312,7 +312,7 @@ class geopoppy_ftp {
             $data = array(
                 'status'=> 'error',
                 'message' => array(
-                    'title' => 'Token has expired',
+                    'title' => jLocale::get('geopoppy~geopoppy.error.ftp.token.expired.title'),
                     'description' => ''
                 )
             );
@@ -325,7 +325,7 @@ class geopoppy_ftp {
                 $data = array(
                     'status' => 'progress',
                     'message' => array(
-                        'title' => 'Media synchronization in progress...',
+                        'title' => jLocale::get('geopoppy~geopoppy.result.ftp.media.progress.title'),
                         'description' => $logcontent
                     ),
                     'data'=> array('token'=>$token)
@@ -333,12 +333,12 @@ class geopoppy_ftp {
 
             } else {
                 if (empty($logcontent)) {
-                    $logcontent = 'Nothing to synchronize';
+                    $logcontent = jLocale::get('geopoppy~geopoppy.result.ftp.media.nothing.title');
                 }
                 $data = array(
                     'status' => 'success',
                     'message' => array(
-                        'title' => 'Media synchronization sucessfull !',
+                        'title' => jLocale::get('geopoppy~geopoppy.result.ftp.media.sucess.title'),
                         'description' => $logcontent
                     )
                 );

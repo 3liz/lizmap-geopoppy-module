@@ -70,8 +70,11 @@ class geopoppyListener extends jEventListener{
         $js = array();
         $js[] = jUrl::get('jelix~www:getfile', array('targetmodule'=>'geopoppy', 'file'=>'geopoppy.js'));
         $jscode = array(
-            'var geopoppyConfig = ' . json_encode($geopoppyConfig)
+            'var geopoppyConfig = ' . json_encode($geopoppyConfig) . ';'
         );
+        // Add translation
+        $locales = $this->getLocales();
+        $jscode[] = 'var geopoppyLocales = ' . json_encode($locales) . ';';
         $css = array();
         $css[] = jUrl::get('jelix~www:getfile', array('targetmodule'=>'geopoppy', 'file'=>'geopoppy.css'));
 
@@ -83,6 +86,28 @@ class geopoppyListener extends jEventListener{
                 'jscode' => $jscode
             )
         );
+    }
+
+    private function getLocales ($lang=Null) {
+
+        if (!$lang) {
+            $lang = jLocale::getCurrentLang().'_'.jLocale::getCurrentCountry();
+        }
+
+        $data = array();
+        $path = jApp::getModulePath('geopoppy').'locales/'.$lang.'/geopoppy.UTF-8.properties';
+        if (file_exists($path)) {
+            $lines = file($path);
+            foreach ($lines as $lineNumber => $lineContent) {
+                if (!empty($lineContent) and $lineContent != '\n') {
+                    $exp = explode('=', trim($lineContent));
+                    if (!empty($exp[0])) {
+                        $data[$exp[0]] = jLocale::get('geopoppy~geopoppy.'.$exp[0], null, $lang);
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }
 ?>
