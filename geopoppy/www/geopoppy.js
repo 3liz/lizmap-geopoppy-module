@@ -297,8 +297,9 @@ var lizGeopoppy = function() {
         });
 
         // Add edition button at the bottom
-        var edition_layers_count = $('#edition-layer').length;
-        if (edition_layers_count) {
+        var edition_layer_select = $('#edition-layer');
+        if (edition_layer_select.length == 1) {
+            var edition_layers_count = edition_layer_select.find('option').length;
             var edition_html = '';
             edition_html += '<div id="mobile_edition">';
             edition_html+= '<center>';
@@ -510,7 +511,7 @@ var lizGeopoppy = function() {
                 autoCenterStatus = true;
                 // Zoom
                 $('#geolocation-center').click();
-                console.log('center = ' + (new Date()).getSeconds());
+                //console.log('center = ' + (new Date()).getSeconds());
                 // Re-run
                 setAutoCenter();
             },
@@ -518,7 +519,7 @@ var lizGeopoppy = function() {
         );
     }
     function clearAutoCenter() {
-        console.log('deactivate');
+        console.log('deactivate auto center');
         autoCenterStatus = false;
         clearTimeout(autoCenterTm);
     }
