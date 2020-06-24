@@ -58,14 +58,9 @@ var lizGeopoppy = function() {
         html+= '</br>';
         html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_action" value="ftp_synchronize">'+geopoppyLocales['ui.button.synchronize.media.title']+'</button>';
         html+= '</br>';
-        html+= '<div class="row">';
-        html+= '<div class="span-6">';
         html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_fullscreen" value="Fullscreen">'+geopoppyLocales['ui.button.toggle.fullscreen.title']+'</button>';
-        html+= '</div>';
-        html+= '<div class="span-6">';
+        html+= '</br>';
         html+= '<button class="btn btn-primary btn-large geopoppy geopoppy_scalecss" value="scalecss">'+geopoppyLocales['ui.button.zoom.interface.title']+'</button>';
-        html+= '</div>';
-        html+= '</div>';
         html+= '</br>';
         html+= '</center>';
         html+= '<p id="geopoppy_message" style="display: none;">&nbsp;</p>';
@@ -157,14 +152,18 @@ var lizGeopoppy = function() {
         // Fullscreen
         $('#geopoppy_form_container button.geopoppy_fullscreen').click(function(){
             toggleFullScreen();
-            var fullscreen_active = document.fullscreenElement;
-            $(this).toggleClass('active', fullscreen_active);
+            var fullscreen_active = (document.fullscreenElement !== null)
+            $(this)
+                .toggleClass('btn-success', !fullscreen_active)
+                .toggleClass('btn-primary', fullscreen_active);
         });
 
         // Big buttons
         $('#geopoppy_form_container button.geopoppy_scalecss').click(function(){
             toggleCssScale();
-            $(this).toggleClass('active', css_scale_active);
+            $(this)
+                .toggleClass('btn-success', css_scale_active)
+                .toggleClass('btn-primary', !css_scale_active);
         });
 
 
@@ -474,12 +473,14 @@ var lizGeopoppy = function() {
             $('div#geolocation button.btn')
             .removeClass('btn-small')
             .addClass('btn-large');
+            lizMap.updateMiniDockSize();
         } else {
             $('head style[data-name="geopoppy"]').remove();
             // Make geolocation button smaller
             $('div#geolocation button.btn')
             .removeClass('btn-large')
             .addClass('btn-small');
+            lizMap.updateMiniDockSize();
         }
         css_scale_active = !css_scale_active;
     }
