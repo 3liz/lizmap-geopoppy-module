@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="geopoppy3liz.com" name="geopoppy" createdate="2020-05-29">
-        <version date="2020-06-23">0.3.0</version>
+        <version date="2020-06-25">0.3.1</version>
         <label lang="en_US">geopoppy</label>
         <description lang="en_US" />
         <license URL="">Mozilla Public Licence 2.0</license>
