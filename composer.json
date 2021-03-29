@@ -18,7 +18,15 @@
         "jelix" : {
             "modules": [
                 "geopoppy/"
-            ]
+            ],
+            "autoconfig-access-16" : {
+                "lizmap@3liz.com" : {
+                    "geopoppy": {
+                        "__global": 1,
+                        "index" : 2
+                    }
+                }
+            }
         }
     }
 }
