@@ -66,7 +66,6 @@ class geopoppyListener extends jEventListener{
         $geopoppyConfig['urls']['service'] = jUrl::get('geopoppy~service:action');
 
         // Set content
-        $bp = jApp::config()->urlengine['basePath'];
         $js = array();
         $js[] = jUrl::get('jelix~www:getfile', array('targetmodule'=>'geopoppy', 'file'=>'geopoppy.js'));
         $jscode = array(

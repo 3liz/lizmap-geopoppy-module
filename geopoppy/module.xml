@@ -5,13 +5,12 @@
         <label lang="en_US">geopoppy</label>
         <description lang="en_US" />
         <license URL="">Mozilla Public Licence 2.0</license>
-        <copyright>2011-2021 3liz</copyright>
+        <copyright>2011-2022 3liz</copyright>
         <creator name="Michaël DOUCHIN" email="mdouchin@3liz.com" />
         <homepageURL>https://3liz.com</homepageURL>
     </info>
     <dependencies>
-        <jelix minversion="1.6.26" maxversion="1.6.*"/>
-        <module name="lizmap" minversion="3.3.*"/>
+        <module name="lizmap" minversion="3.3.*" maxversion="3.6.*"/>
     </dependencies>
     <autoload>
         <class name="geopoppy_sql" file="classes/geopoppy_sql.class.php" />

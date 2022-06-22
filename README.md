@@ -14,6 +14,11 @@ lizmap 3.3 ou inférieur, passez à la section sur l'installation manuelle.
   déjà, en copiant le fichier `composer.json.dist`, qui s'y trouve.
 * en ligne de commande, dans le répertoire `lizmap/my-packages/`, tapez :
   `composer require "lizmap/lizmap-geopoppy-module"`
+* Si vous utilisez Lizmap 3.6 et suivante, exécuter ensuite la commande de configuration :
+
+```bash
+php lizmap/install/configurator.php
+```
 * puis dans le répertoire `lizmap/install/`, lancer les commandes suivantes :
 
 ```bash
